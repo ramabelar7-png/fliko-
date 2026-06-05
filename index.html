@@ -6,14 +6,14 @@
 <title>Fliko — Mbrojtësi i Natyrës</title>
 <style>
   :root{
-    --green:#6cab2e;          /* leaf green, matches comic accents */
+    --green:#6cab2e;
     --green-dark:#558a22;
-    --green-deep:#3f6b18;     /* high-contrast for accessibility */
+    --green-deep:#3f6b18;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{
     width:100%;height:100%;
-    background:#ffffff;
+    background:transparent;            /* transparent — shows through in Readymag */
     overflow:hidden;
     -webkit-user-select:none;user-select:none;
     -webkit-tap-highlight-color:transparent;
@@ -22,26 +22,23 @@
   #scene{
     width:100vw;height:100vh;
     display:flex;align-items:center;justify-content:center;
-    background:#ffffff;
+    background:transparent;
     position:relative;
-    /* breathing space around the whole flipbook */
-    padding:48px 92px;
   }
   #book-wrap{
-    width:100%;height:100%;
-    max-width:1500px;
     display:flex;align-items:center;justify-content:center;
+    /* width & height are set by JS so the book always fits (no fullscreen crop) */
   }
   #book{ margin:auto; }
-  /* clear drop shadow so the book reads as a physical object on white */
-  #book .stf__parent{
+
+  /* ── BOOK DROP SHADOW ── on the block that holds the visible spread ── */
+  #book .stf__block{
     filter:
-      drop-shadow(0 24px 48px rgba(40,55,20,.28))
-      drop-shadow(0 8px 18px rgba(0,0,0,.16))
-      drop-shadow(0 2px 4px rgba(0,0,0,.10));
+      drop-shadow(0 22px 44px rgba(35,50,15,.32))
+      drop-shadow(0 8px 16px rgba(0,0,0,.18));
   }
 
-  /* ── ACCESSIBLE GREEN ARROWS ── solid, high-contrast, always visible ── */
+  /* ── GREEN ARROWS — flat, no drop shadow ── */
   .nav{
     position:absolute;top:50%;transform:translateY(-50%);
     width:58px;height:58px;border-radius:50%;
@@ -49,8 +46,7 @@
     background:var(--green);
     color:#ffffff;cursor:pointer;
     display:flex;align-items:center;justify-content:center;
-    box-shadow:0 6px 16px rgba(63,107,24,.40), 0 2px 5px rgba(0,0,0,.18);
-    transition:background .18s, transform .18s, box-shadow .18s;
+    transition:background .18s, transform .18s;
     z-index:50;
   }
   .nav:hover{ background:var(--green-dark); transform:translateY(-50%) scale(1.08); }
@@ -60,14 +56,13 @@
   .nav.prev{ left:24px; }
   .nav.next{ right:24px; }
 
-  /* ── FULLSCREEN BUTTON ── */
+  /* ── FULLSCREEN BUTTON — flat, no drop shadow ── */
   #fs{
     position:absolute;top:20px;right:24px;
     width:46px;height:46px;border-radius:12px;
     border:2px solid var(--green);
-    background:#ffffff;color:var(--green-dark);
+    background:rgba(255,255,255,.85);color:var(--green-dark);
     cursor:pointer;display:flex;align-items:center;justify-content:center;
-    box-shadow:0 4px 12px rgba(63,107,24,.18);
     transition:all .18s;z-index:60;
   }
   #fs:hover{ background:var(--green); color:#fff; }
@@ -76,8 +71,7 @@
 
   #ld{position:absolute;color:var(--green);font:14px/1 Georgia,serif;letter-spacing:.25em}
 
-  @media(max-width:640px){
-    #scene{ padding:24px 56px; }
+  @media(max-width:700px){
     .nav{ width:46px;height:46px; left:8px; }
     .nav.next{ right:8px; left:auto; }
     .nav svg{ width:20px;height:20px; }
@@ -87,7 +81,6 @@
 </head>
 <body>
 <div id="scene">
-
   <button class="nav prev" aria-label="Faqja e mëparshme">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
   </button>
@@ -114,13 +107,32 @@
 (function(){
   var PAGES = ["page-01.jpg","page-02.jpg","page-03.jpg","page-04.jpg","page-05.jpg","page-06.jpg","page-07.jpg","page-08.jpg","page-09.jpg","page-10.jpg","page-11.jpg","page-12.jpg","page-13.jpg","page-14.jpg","page-15.jpg","page-16.jpg","page-17.jpg","page-18.jpg","page-19.jpg","page-20.jpg","page-21.jpg","page-22.jpg","page-23.jpg","page-24.jpg","page-25.jpg","page-26.jpg","page-27.jpg","page-28.jpg"];
   var el = document.getElementById('book');
+  var wrap = document.getElementById('book-wrap');
   var ld = document.getElementById('ld');
 
+  var PAGE_W = 550, PAGE_H = 778;            // A4 ratio per page
+  var GAP_X = 80, GAP_Y = 44;                // breathing space around the book
+
+  // Size the wrapper so the book ALWAYS fits the screen (prevents fullscreen crop)
+  function fit(){
+    var mobile = window.innerWidth < 700;
+    var aspect = mobile ? (PAGE_W/PAGE_H) : ((PAGE_W*2)/PAGE_H); // spread vs single
+    var gx = mobile ? 24 : GAP_X, gy = mobile ? 18 : GAP_Y;
+    var availW = window.innerWidth  - gx*2;
+    var availH = window.innerHeight - gy*2;
+    var w, h;
+    if(availW/availH > aspect){ h = availH; w = h*aspect; }
+    else { w = availW; h = w/aspect; }
+    wrap.style.width  = Math.round(w)+'px';
+    wrap.style.height = Math.round(h)+'px';
+  }
+  fit();
+
   var pageFlip = new St.PageFlip(el, {
-    width: 550, height: 778,
+    width: PAGE_W, height: PAGE_H,
     size: 'stretch',
-    minWidth: 280, maxWidth: 1600,
-    minHeight: 396, maxHeight: 2260,
+    minWidth: 200, maxWidth: 3000,
+    minHeight: 280, maxHeight: 3000,
     drawShadow: true,
     maxShadowOpacity: 0.5,
     showCover: true,
@@ -135,15 +147,18 @@
   pageFlip.loadFromImages(PAGES);
   pageFlip.on('init', function(){ if(ld) ld.style.display='none'; });
 
+  function relayout(){ fit(); try{ pageFlip.update(); }catch(e){} }
+  window.addEventListener('resize', relayout);
+  document.addEventListener('fullscreenchange', function(){ setTimeout(relayout, 120); });
+  document.addEventListener('webkitfullscreenchange', function(){ setTimeout(relayout, 120); });
+
   document.querySelector('.next').addEventListener('click', function(){ pageFlip.flipNext(); });
   document.querySelector('.prev').addEventListener('click', function(){ pageFlip.flipPrev(); });
-
   document.addEventListener('keydown', function(e){
     if(e.key==='ArrowRight') pageFlip.flipNext();
     if(e.key==='ArrowLeft')  pageFlip.flipPrev();
   });
 
-  // Fullscreen toggle
   var fs = document.getElementById('fs');
   fs.addEventListener('click', function(){
     var d=document;
@@ -153,7 +168,6 @@
     } else {
       (d.exitFullscreen||d.webkitExitFullscreen||function(){}).call(d);
     }
-    setTimeout(function(){ pageFlip.update(); }, 350);
   });
 })();
 </script>
