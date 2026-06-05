@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Fliko — Mbrojtësi i Natyrës</title>
+<style>html,body{margin:0;height:100%;background:#dde6cf}#fliko-book{height:100vh}</style>
+</head><body>
+<div id="fliko-book">
+  <div class="fb-stage">
+    <button class="fb-nav fb-prev" aria-label="Previous">&#8249;</button>
+
+    <div class="fb-book-wrap">
+      <div class="fb-book">
+        <div class="fb-half fb-left"><img class="fb-img-left" alt=""></div>
+        <div class="fb-spine"></div>
+        <div class="fb-half fb-right"><img class="fb-img-right" alt=""></div>
+        <div class="fb-flip">
+          <div class="fb-face fb-front"><img alt=""></div>
+          <div class="fb-face fb-back"><img alt=""></div>
+        </div>
+      </div>
+      <button class="fb-zoom" aria-label="Zoom">&#9906;</button>
+    </div>
+
+    <button class="fb-nav fb-next" aria-label="Next">&#8250;</button>
+  </div>
+
+  <div class="fb-bar">
+    <span class="fb-counter">1 / 28</span>
+    <div class="fb-thumbs"></div>
+  </div>
+
+  <div class="fb-zoom-overlay">
+    <button class="fb-zoom-x" aria-label="Close">&times;</button>
+    <img class="fb-zoom-full" alt="">
+  </div>
+</div>
+
+<style>
+#fliko-book{--fb-bg:#eef3e6;--fb-accent:#7aa83f;--fb-dark:#2f3a22;font-family:Georgia,'Times New Roman',serif;width:100%;height:100%;display:flex;flex-direction:column;position:relative;background:radial-gradient(ellipse at 50% 25%,#f3f6ec 0%,#dde6cf 100%);overflow:hidden;-webkit-user-select:none;user-select:none}
+#fliko-book *{box-sizing:border-box}
+#fliko-book .fb-stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;perspective:2600px;min-height:0;padding:14px}
+#fliko-book .fb-book-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+#fliko-book .fb-book{position:relative;display:flex;transform-style:preserve-3d;border-radius:2px 4px 4px 2px;box-shadow:0 22px 55px rgba(40,50,20,.32),0 6px 16px rgba(0,0,0,.18)}
+#fliko-book .fb-half{position:relative;overflow:hidden;flex-shrink:0;background:#fff}
+#fliko-book .fb-half img{display:block;width:100%;height:100%;object-fit:cover}
+#fliko-book .fb-left{border-radius:2px 0 0 2px}
+#fliko-book .fb-right{border-radius:0 2px 2px 0}
+#fliko-book .fb-left::after{content:'';position:absolute;top:0;right:0;bottom:0;width:26px;background:linear-gradient(to left,rgba(0,0,0,.16),transparent);pointer-events:none}
+#fliko-book .fb-right::before{content:'';position:absolute;top:0;left:0;bottom:0;width:26px;background:linear-gradient(to right,rgba(0,0,0,.12),transparent);pointer-events:none;z-index:1}
+#fliko-book .fb-spine{width:9px;flex-shrink:0;background:linear-gradient(to right,#28301a,#4c5a32,#39431f,#222a14);box-shadow:0 0 10px rgba(0,0,0,.4);position:relative;z-index:5}
+#fliko-book .fb-flip{position:absolute;top:0;height:100%;transform-style:preserve-3d;pointer-events:none;z-index:20;display:none}
+#fliko-book .fb-face{position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;background:#fff}
+#fliko-book .fb-face img{width:100%;height:100%;object-fit:cover}
+#fliko-book .fb-back{transform:rotateY(180deg)}
+@keyframes fbFwd{0%{transform:rotateY(0);box-shadow:-6px 0 18px rgba(0,0,0,.25)}50%{box-shadow:-18px 0 36px rgba(0,0,0,.35)}100%{transform:rotateY(-180deg);box-shadow:none}}
+@keyframes fbBwd{0%{transform:rotateY(0);box-shadow:6px 0 18px rgba(0,0,0,.25)}50%{box-shadow:18px 0 36px rgba(0,0,0,.35)}100%{transform:rotateY(180deg);box-shadow:none}}
+#fliko-book .fb-nav{flex-shrink:0;width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(70,90,40,.3);background:rgba(255,255,255,.6);backdrop-filter:blur(6px);cursor:pointer;font-size:22px;line-height:1;color:var(--fb-dark);transition:all .2s;z-index:30;margin:0 6px}
+#fliko-book .fb-nav:hover{background:#fff;border-color:var(--fb-accent);color:var(--fb-accent);transform:scale(1.07)}
+#fliko-book .fb-nav:disabled{opacity:.25;cursor:not-allowed;transform:none}
+#fliko-book .fb-zoom{position:absolute;bottom:8px;right:8px;width:30px;height:30px;border-radius:5px;border:1px solid rgba(70,90,40,.25);background:rgba(255,255,255,.55);cursor:pointer;font-size:13px;color:var(--fb-dark);z-index:25;transition:all .2s}
+#fliko-book .fb-zoom:hover{background:#fff}
+#fliko-book .fb-bar{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:7px;padding:8px 12px 12px}
+#fliko-book .fb-counter{font-size:11px;letter-spacing:.14em;color:#5d6b42}
+#fliko-book .fb-thumbs{display:flex;gap:5px;overflow-x:auto;max-width:100%;padding:0 4px 4px;scrollbar-width:thin;scrollbar-color:rgba(90,110,50,.3) transparent}
+#fliko-book .fb-thumbs::-webkit-scrollbar{height:3px}
+#fliko-book .fb-thumbs::-webkit-scrollbar-thumb{background:rgba(90,110,50,.3);border-radius:2px}
+#fliko-book .fb-thumb{flex-shrink:0;width:30px;height:43px;object-fit:cover;border-radius:1px;cursor:pointer;opacity:.4;border:1.5px solid transparent;transition:all .18s}
+#fliko-book .fb-thumb:hover{opacity:.7}
+#fliko-book .fb-thumb.on{opacity:1;border-color:var(--fb-accent);box-shadow:0 0 6px rgba(122,168,63,.5)}
+#fliko-book .fb-zoom-overlay{display:none;position:absolute;inset:0;background:rgba(25,30,15,.93);z-index:999;align-items:center;justify-content:center;cursor:zoom-out}
+#fliko-book .fb-zoom-overlay.on{display:flex}
+#fliko-book .fb-zoom-full{max-width:92%;max-height:92%;object-fit:contain;border-radius:2px;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+#fliko-book .fb-zoom-x{position:absolute;top:14px;right:18px;background:none;border:none;color:rgba(220,230,200,.7);font-size:30px;cursor:pointer;line-height:1}
+#fliko-book .fb-zoom-x:hover{color:#fff}
+@media(max-width:640px){#fliko-book .fb-left,#fliko-book .fb-spine{display:none!important}#fliko-book .fb-right{border-radius:2px}#fliko-book .fb-nav{width:36px;height:36px;font-size:18px}}
+</style>
+
+<script>
+(function(){
+  // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+  // ▼▼▼  EDIT THIS ONE LINE — your hosted image folder URL  ▼▼▼
+  var BASE = "pages/";
+  // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+  var TOTAL = 28;
+
+  var PAGES = [];
+  for(var i=1;i<=TOTAL;i++){PAGES.push(BASE+"page-"+String(i).padStart(2,"0")+".jpg");}
+
+  var root = document.getElementById("fliko-book");
+  var book = root.querySelector(".fb-book");
+  var leftHalf = root.querySelector(".fb-left");
+  var rightHalf = root.querySelector(".fb-right");
+  var spine = root.querySelector(".fb-spine");
+  var imgL = root.querySelector(".fb-img-left");
+  var imgR = root.querySelector(".fb-img-right");
+  var flip = root.querySelector(".fb-flip");
+  var fpFront = flip.querySelector(".fb-front img");
+  var fpBack = flip.querySelector(".fb-back img");
+  var prevBtn = root.querySelector(".fb-prev");
+  var nextBtn = root.querySelector(".fb-next");
+  var counter = root.querySelector(".fb-counter");
+  var thumbsEl = root.querySelector(".fb-thumbs");
+  var zoomOv = root.querySelector(".fb-zoom-overlay");
+  var zoomFull = root.querySelector(".fb-zoom-full");
+
+  var spread = 0, busy = false;
+  var totalSpreads = Math.ceil((TOTAL-1)/2)+1;
+
+  function sp(s){ if(s===0) return [null,0]; var l=s*2-1,r=s*2; return [l<TOTAL?l:null,r<TOTAL?r:null]; }
+
+  function isMobile(){ return window.innerWidth<640; }
+
+  function resize(){
+    var stage=root.querySelector(".fb-stage");
+    var availH=stage.clientHeight-28, availW=stage.clientWidth-120;
+    var pageH=Math.min(availH,760);
+    var pageW=Math.round(pageH/1.4142);
+    if(!isMobile() && pageW*2>availW){ pageW=Math.floor(availW/2); pageH=Math.round(pageW*1.4142); }
+    if(isMobile() && pageW>availW){ pageW=availW; pageH=Math.round(pageW*1.4142); }
+    var bookW=isMobile()?pageW:pageW*2+9;
+    book.style.width=bookW+"px"; book.style.height=pageH+"px";
+    leftHalf.style.width=pageW+"px"; rightHalf.style.width=pageW+"px";
+  }
+
+  function render(s){
+    var p=sp(s),l=p[0],r=p[1],m=isMobile();
+    if(l!==null && !m){ imgL.src=PAGES[l]; leftHalf.style.display=""; spine.style.display=""; }
+    else { imgL.removeAttribute("src"); leftHalf.style.display="none"; spine.style.display="none"; }
+    imgR.src = r!==null?PAGES[r]:"";
+    if(l!==null&&r!==null) counter.textContent=(l+1)+"–"+(r+1)+" / "+TOTAL;
+    else if(l!==null) counter.textContent=(l+1)+" / "+TOTAL;
+    else counter.textContent="1 / "+TOTAL;
+    prevBtn.disabled=s===0; nextBtn.disabled=s>=totalSpreads-1;
+    var th=thumbsEl.querySelectorAll(".fb-thumb");
+    th.forEach(function(t,i){ t.classList.toggle("on",(l!==null&&i===l)||(r!==null&&i===r)); });
+    var act=thumbsEl.querySelector(".fb-thumb.on");
+    if(act) act.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});
+  }
+
+  function doFlip(dir){
+    if(busy) return;
+    var t=spread+dir; if(t<0||t>=totalSpreads) return;
+    busy=true;
+    var cur=sp(spread), nxt=sp(t);
+    var pageW=parseInt(rightHalf.style.width), m=isMobile();
+    flip.style.width=pageW+"px"; flip.style.height=book.style.height;
+    if(dir>0){
+      fpFront.src = cur[1]!==null?PAGES[cur[1]]:"";
+      fpBack.src  = nxt[0]!==null?PAGES[nxt[0]]:"";
+      flip.style.left = m?"0px":(pageW+9)+"px";
+      flip.style.transformOrigin="left center";
+      flip.style.display="block"; flip.style.animation="none"; flip.offsetHeight;
+      flip.style.animation="fbFwd .62s cubic-bezier(.645,.045,.355,1) forwards";
+    } else {
+      fpFront.src = cur[0]!==null?PAGES[cur[0]]:"";
+      fpBack.src  = nxt[1]!==null?PAGES[nxt[1]]:"";
+      flip.style.left="0px";
+      flip.style.transformOrigin="right center";
+      flip.style.display="block"; flip.style.animation="none"; flip.offsetHeight;
+      flip.style.animation="fbBwd .62s cubic-bezier(.645,.045,.355,1) forwards";
+    }
+    spread=t;
+    flip.addEventListener("animationend",function done(){
+      flip.removeEventListener("animationend",done);
+      flip.style.display="none"; render(spread); busy=false;
+    });
+  }
+
+  prevBtn.addEventListener("click",function(){doFlip(-1);});
+  nextBtn.addEventListener("click",function(){doFlip(1);});
+
+  // thumbs
+  PAGES.forEach(function(src,i){
+    var t=document.createElement("img");
+    t.className="fb-thumb"; t.src=src; t.loading="lazy"; t.alt="Page "+(i+1);
+    t.addEventListener("click",function(){
+      if(busy) return;
+      spread = i===0?0:Math.ceil(i/2);
+      render(spread);
+    });
+    thumbsEl.appendChild(t);
+  });
+
+  // keyboard
+  root.setAttribute("tabindex","0");
+  document.addEventListener("keydown",function(e){
+    if(e.key==="ArrowRight") doFlip(1);
+    if(e.key==="ArrowLeft") doFlip(-1);
+    if(e.key==="Escape") zoomOv.classList.remove("on");
+  });
+
+  // swipe
+  var tx=0;
+  var stage=root.querySelector(".fb-stage");
+  stage.addEventListener("touchstart",function(e){tx=e.touches[0].clientX;},{passive:true});
+  stage.addEventListener("touchend",function(e){
+    var dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>45) doFlip(dx<0?1:-1);
+  });
+
+  // zoom
+  root.querySelector(".fb-zoom").addEventListener("click",function(){
+    var p=sp(spread); var src=p[1]!==null?PAGES[p[1]]:(p[0]!==null?PAGES[p[0]]:"");
+    if(!src) return; zoomFull.src=src; zoomOv.classList.add("on");
+  });
+  root.querySelector(".fb-zoom-x").addEventListener("click",function(){zoomOv.classList.remove("on");});
+  zoomOv.addEventListener("click",function(e){ if(e.target===zoomOv||e.target===zoomFull) zoomOv.classList.remove("on"); });
+
+  window.addEventListener("resize",resize);
+  resize(); render(0);
+})();
+</script>
+
+</body></html>
