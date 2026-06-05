@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Fliko — Mbrojtësi i Natyrës</title>
 <style>
+  :root{
+    --green:#6cab2e;          /* leaf green, matches comic accents */
+    --green-dark:#558a22;
+    --green-deep:#3f6b18;     /* high-contrast for accessibility */
+  }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{
     width:100%;height:100%;
@@ -12,50 +17,91 @@
     overflow:hidden;
     -webkit-user-select:none;user-select:none;
     -webkit-tap-highlight-color:transparent;
+    font-family:Georgia,'Times New Roman',serif;
   }
   #scene{
     width:100vw;height:100vh;
     display:flex;align-items:center;justify-content:center;
     background:#ffffff;
     position:relative;
+    /* breathing space around the whole flipbook */
+    padding:48px 92px;
   }
   #book-wrap{
-    width:92vw;height:92vh;
+    width:100%;height:100%;
+    max-width:1500px;
     display:flex;align-items:center;justify-content:center;
   }
-  #book{
-    /* StPageFlip injects pages here */
-  }
-  /* soft drop shadow under the whole book for depth on white bg */
+  #book{ margin:auto; }
+  /* clear drop shadow so the book reads as a physical object on white */
   #book .stf__parent{
-    filter:drop-shadow(0 18px 40px rgba(0,0,0,.18)) drop-shadow(0 4px 10px rgba(0,0,0,.10));
+    filter:
+      drop-shadow(0 24px 48px rgba(40,55,20,.28))
+      drop-shadow(0 8px 18px rgba(0,0,0,.16))
+      drop-shadow(0 2px 4px rgba(0,0,0,.10));
   }
-  /* nav arrows — minimal, fade unless hovered */
+
+  /* ── ACCESSIBLE GREEN ARROWS ── solid, high-contrast, always visible ── */
   .nav{
     position:absolute;top:50%;transform:translateY(-50%);
-    width:46px;height:46px;border-radius:50%;
-    border:none;background:rgba(0,0,0,.04);
-    color:#3a3a3a;font-size:22px;line-height:1;cursor:pointer;
+    width:58px;height:58px;border-radius:50%;
+    border:3px solid #ffffff;
+    background:var(--green);
+    color:#ffffff;cursor:pointer;
     display:flex;align-items:center;justify-content:center;
-    transition:background .2s,opacity .2s;opacity:.45;z-index:50;
+    box-shadow:0 6px 16px rgba(63,107,24,.40), 0 2px 5px rgba(0,0,0,.18);
+    transition:background .18s, transform .18s, box-shadow .18s;
+    z-index:50;
   }
-  .nav:hover{background:rgba(0,0,0,.10);opacity:1}
-  .nav.prev{left:18px}
-  .nav.next{right:18px}
+  .nav:hover{ background:var(--green-dark); transform:translateY(-50%) scale(1.08); }
+  .nav:active{ background:var(--green-deep); }
+  .nav:focus-visible{ outline:4px solid var(--green-deep); outline-offset:3px; }
+  .nav svg{ width:26px;height:26px; }
+  .nav.prev{ left:24px; }
+  .nav.next{ right:24px; }
+
+  /* ── FULLSCREEN BUTTON ── */
+  #fs{
+    position:absolute;top:20px;right:24px;
+    width:46px;height:46px;border-radius:12px;
+    border:2px solid var(--green);
+    background:#ffffff;color:var(--green-dark);
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 12px rgba(63,107,24,.18);
+    transition:all .18s;z-index:60;
+  }
+  #fs:hover{ background:var(--green); color:#fff; }
+  #fs:focus-visible{ outline:4px solid var(--green-deep); outline-offset:3px; }
+  #fs svg{ width:22px;height:22px; }
+
+  #ld{position:absolute;color:var(--green);font:14px/1 Georgia,serif;letter-spacing:.25em}
+
   @media(max-width:640px){
-    .nav{width:38px;height:38px;font-size:18px;opacity:.3}
-    .nav.prev{left:6px} .nav.next{right:6px}
-    #book-wrap{width:96vw;height:88vh}
+    #scene{ padding:24px 56px; }
+    .nav{ width:46px;height:46px; left:8px; }
+    .nav.next{ right:8px; left:auto; }
+    .nav svg{ width:20px;height:20px; }
+    #fs{ width:40px;height:40px;top:12px;right:12px; }
   }
-  /* loading dot */
-  #ld{position:absolute;color:#9bb46a;font:14px/1 Georgia,serif;letter-spacing:.2em}
 </style>
 </head>
 <body>
 <div id="scene">
-  <button class="nav prev" aria-label="Prapa">&#8249;</button>
+
+  <button class="nav prev" aria-label="Faqja e mëparshme">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  </button>
+
   <div id="book-wrap"><div id="book"></div></div>
-  <button class="nav next" aria-label="Para">&#8250;</button>
+
+  <button class="nav next" aria-label="Faqja tjetër">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </button>
+
+  <button id="fs" aria-label="Ekran i plotë">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>
+  </button>
+
   <div id="ld">…</div>
 </div>
 
@@ -70,28 +116,23 @@
   var el = document.getElementById('book');
   var ld = document.getElementById('ld');
 
-  // A4 page ratio 1 : 1.4142
   var pageFlip = new St.PageFlip(el, {
-    width: 550,
-    height: 778,
+    width: 550, height: 778,
     size: 'stretch',
-    minWidth: 280,
-    maxWidth: 1600,
-    minHeight: 396,
-    maxHeight: 2260,
+    minWidth: 280, maxWidth: 1600,
+    minHeight: 396, maxHeight: 2260,
     drawShadow: true,
     maxShadowOpacity: 0.5,
-    showCover: true,            // cover stands alone like a real book
-    flippingTime: 800,          // smooth, paper-like
-    usePortrait: true,          // single page view on narrow screens
+    showCover: true,
+    flippingTime: 800,
+    usePortrait: true,
     mobileScrollSupport: false,
     swipeDistance: 30,
-    showPageCorners: true,      // peelable corners
+    showPageCorners: true,
     disableFlipByClick: false
   });
 
   pageFlip.loadFromImages(PAGES);
-
   pageFlip.on('init', function(){ if(ld) ld.style.display='none'; });
 
   document.querySelector('.next').addEventListener('click', function(){ pageFlip.flipNext(); });
@@ -100,6 +141,19 @@
   document.addEventListener('keydown', function(e){
     if(e.key==='ArrowRight') pageFlip.flipNext();
     if(e.key==='ArrowLeft')  pageFlip.flipPrev();
+  });
+
+  // Fullscreen toggle
+  var fs = document.getElementById('fs');
+  fs.addEventListener('click', function(){
+    var d=document;
+    if(!d.fullscreenElement && !d.webkitFullscreenElement){
+      var r=d.documentElement;
+      (r.requestFullscreen||r.webkitRequestFullscreen||function(){}).call(r);
+    } else {
+      (d.exitFullscreen||d.webkitExitFullscreen||function(){}).call(d);
+    }
+    setTimeout(function(){ pageFlip.update(); }, 350);
   });
 })();
 </script>
